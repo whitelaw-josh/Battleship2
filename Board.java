@@ -8,6 +8,7 @@ package Battleship2;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 public class Board extends JFrame{
@@ -33,29 +34,52 @@ public class Board extends JFrame{
 		JPanel enemyBoard = new JPanel();
 		enemyBoard.setLayout(new GridLayout(11,11,1,1));
 
-		
+		//Counters to set specific values for buttons
+		int xCount = 0;
+		int yCount = 0;
+				
 		for(int a = 0; a < 121; a++)
 		{
 			JButton button = new JButton();
 			
 			button.setSize(50,50);//FIX DIS SHIT
 			
-			//Will make a move if clicked upon
-			button.addActionListener(new ActionListener()
-			{
-				public void actionPerformed (ActionEvent e)
-				{
-					//Move.makeAMove();
-				}
-			});
-			
 			if(a!=0)
 			{
+				//Sets the letter labeling for enemy board
 				if(a < 11)
 					button.setLabel(labels.get(a-1));
 				
+				//Sets the number labeling for enemy board
 				else if(a%11==0)
 					button.setLabel(labels.get(((a-1)/11)+10)); //FIGURE OUT PROBLEM HERE
+				
+				//Adds action listeners to specific buttons
+				else
+				{
+					final int xFinal = xCount;
+					final int yFinal = yCount;
+					//Will make a move if clicked upon
+					button.addActionListener(new ActionListener()
+					{
+						public void actionPerformed (ActionEvent e)
+						{
+							int x = xFinal, y = yFinal;
+							Move.MakeAMove(x, y);
+						}
+					});
+					
+					if(xCount % 9 == 0 && xCount != 0)
+					{
+						xCount = 0;
+						yCount++;
+					}
+					
+					else
+					{
+						xCount++;
+					}
+				}
 			}
 			
 			enemyBoard.add(button);
@@ -99,7 +123,7 @@ public class Board extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				//Move.newGame();
+				Move.NewGame();
 			}
 		});
 		
@@ -109,9 +133,11 @@ public class Board extends JFrame{
 			public void actionPerformed(ActionEvent e)
 			{
 				int choice = JOptionPane.showConfirmDialog(null, 
-						"Are you sure you want to quit?",
+						new JLabel("Are you sure you want to quit?", JLabel.CENTER),
 						"",
-						JOptionPane.YES_NO_OPTION);
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE);
+
 				if(choice == JOptionPane.YES_OPTION)
 					frame.dispose();
 			}
